@@ -88,7 +88,8 @@ cargo tauri dev
    - Launch the application
    - Go to Settings (⌘, on macOS or via menu)
    - Enter your Anthropic API key
-   - The key is stored securely on your local machine
+   - The key is stored securely on your local machine only
+   - Your API key is never shared with anyone and remains private on your computer
 
 2. **Looking up words**: 
    - Type any Latin word and press Enter or click the search button
