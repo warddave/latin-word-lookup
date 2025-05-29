@@ -55,6 +55,58 @@ jobs:
     - name: Run clippy
       working-directory: src-tauri
       run: cargo clippy -- -D warnings
+    
+    - name: Install cargo-audit
+      run: cargo install cargo-audit
+    
+    - name: Security audit
+      working-directory: src-tauri
+      run: cargo audit
+    
+    - name: Install cargo-deny
+      run: cargo install cargo-deny
+    
+    - name: Check licenses and dependencies
+      working-directory: src-tauri
+      run: cargo deny check
+
+  static-analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: stable
+    
+    - name: Cache cargo dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          src-tauri/target/
+        key: ${{ runner.os }}-cargo-static-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libwebkit2gtk-4.1-dev libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+    
+    - name: Install cargo-outdated
+      run: cargo install cargo-outdated
+    
+    - name: Check for outdated dependencies
+      working-directory: src-tauri
+      run: cargo outdated --exit-code 1 || echo "::warning::Some dependencies are outdated"
 
   build:
     name: Build
