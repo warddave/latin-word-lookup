@@ -1,0 +1,50 @@
+# Configuration for PR labeler
+# https://github.com/actions/labeler
+
+# Add 'rust' label to any Rust file changes
+rust:
+  - changed-files:
+    - any-glob-to-any-file: 
+      - src-tauri/**/*.rs
+      - src-tauri/Cargo.toml
+      - src-tauri/Cargo.lock
+
+# Add 'documentation' label to any documentation changes
+documentation:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.md'
+      - 'LICENSE'
+      - 'NOTICE'
+
+# Add 'ci' label to any CI/CD changes
+ci:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/**'
+
+# Add 'dependencies' label to dependency changes
+dependencies:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/Cargo.toml'
+      - '**/Cargo.lock'
+      - '**/package.json'
+      - '**/package-lock.json'
+
+# Add 'tauri' label to Tauri-specific changes
+tauri:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'tauri.conf.json'
+      - 'src-tauri/tauri.conf.json'
+      - 'src-tauri/capabilities/**'
+      - 'src-tauri/icons/**'
+
+# Add 'security' label to security-related files
+security:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/workflows/security.yml'
+      - 'src-tauri/deny.toml'
+      - '**/audit.toml'

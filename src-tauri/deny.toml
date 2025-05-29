@@ -49,8 +49,8 @@ skip-tree = []
 db-path = "~/.cargo/advisory-db"
 # The url(s) of the advisory databases to use
 db-urls = ["https://github.com/rustsec/advisory-db"]
-# The lint level for unmaintained crates
-unmaintained = "warn"
+# Check for unmaintained crates
+unmaintained = "all"
 # A list of advisory IDs to ignore. Note that ignored advisories will still
 # output a note when they are encountered.
 ignore = [

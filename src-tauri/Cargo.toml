@@ -2,6 +2,7 @@
 name = "latin-word-lookup"
 version = "0.1.2"
 edition = "2021"
+rust-version = "1.70.0"  # MSRV - Minimum Supported Rust Version
 license = "MIT"
 authors = ["David Ward"]
 description = "A Tauri-based Latin word lookup application with Claude AI integration"
