@@ -1,4 +1,4 @@
-use playground::claude_api::{ClaudeClient, LatinWordResult};
+use latin_word_lookup::claude_api::{ClaudeClient, LatinWordResult};
 
 #[tokio::test]
 async fn test_latin_word_result_json_parsing() {
