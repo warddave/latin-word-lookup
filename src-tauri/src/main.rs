@@ -180,7 +180,7 @@ fn main() {
     builder
         .setup(|app| {
             // Initialize config manager
-            let config_manager = ConfigManager::new(&app.handle())?;
+            let config_manager = ConfigManager::new(app.handle())?;
             let state = AppState {
                 config_manager: Mutex::new(Some(config_manager)),
             };

@@ -3,15 +3,9 @@ use std::fs;
 use std::path::PathBuf;
 use tauri::{AppHandle, Manager};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct Config {
     pub api_key: Option<String>,
-}
-
-impl Default for Config {
-    fn default() -> Self {
-        Self { api_key: None }
-    }
 }
 
 pub struct ConfigManager {
