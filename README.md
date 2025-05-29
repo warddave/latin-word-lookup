@@ -1,5 +1,10 @@
 # Latin Word Lookup
 
+[![Build Status](https://github.com/warddave/latin-word-lookup/workflows/CI/badge.svg)](https://github.com/warddave/latin-word-lookup/actions)
+[![Release](https://img.shields.io/github/v/release/warddave/latin-word-lookup)](https://github.com/warddave/latin-word-lookup/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey)](https://github.com/warddave/latin-word-lookup/releases)
+
 A modern, desktop application for looking up Latin words with detailed grammatical information and macron support. Built with [Tauri](https://tauri.app) and powered by [Claude AI](https://claude.ai).
 
 ## Features
