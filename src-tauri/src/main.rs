@@ -111,7 +111,10 @@ fn get_app_version() -> String {
 }
 
 fn main() {
+    #[cfg(target_os = "macos")]
     let mut builder = tauri::Builder::default();
+    #[cfg(not(target_os = "macos"))]
+    let builder = tauri::Builder::default();
     
     // Add menu for macOS
     #[cfg(target_os = "macos")]
