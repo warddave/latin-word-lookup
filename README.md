@@ -156,4 +156,4 @@ All critical paths are covered by tests to ensure reliability.
 
 ## Contributing
 
-Found a bug or have a feature request? Please submit a [GitHub issue](https://github.com/warddave/latin-word-lookup/issues/new). We welcome your feedback and contributions!
+Found a bug or have a feature request? Please submit a [GitHub issue or PR](https://github.com/warddave/latin-word-lookup/issues/new). We welcome your feedback and contributions!
