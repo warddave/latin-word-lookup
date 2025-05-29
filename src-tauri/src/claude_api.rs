@@ -49,8 +49,12 @@ impl ClaudeClient {
             http_client: reqwest::Client::new(),
         }
     }
-    
-    pub async fn lookup_latin_word(&self, word: &str, custom_prompt: Option<&str>) -> Result<LatinWordResult, String> {
+
+    pub async fn lookup_latin_word(
+        &self,
+        word: &str,
+        custom_prompt: Option<&str>,
+    ) -> Result<LatinWordResult, String> {
         let mut prompt = format!(
             "You are a Latin dictionary expert. For the Latin word '{}', provide its dictionary entry with EXTREME ACCURACY.
 
@@ -116,7 +120,7 @@ ESSENTIAL REQUIREMENTS:
 - Output ONLY the JSON, no additional text",
             word
         );
-        
+
         // Add custom prompt if provided
         if let Some(custom) = custom_prompt {
             if !custom.trim().is_empty() {
@@ -124,7 +128,7 @@ ESSENTIAL REQUIREMENTS:
                 prompt.push_str(custom);
             }
         }
-        
+
         let request = ClaudeRequest {
             model: MODEL.to_string(),
             max_tokens: MAX_TOKENS,
@@ -133,8 +137,9 @@ ESSENTIAL REQUIREMENTS:
                 content: prompt,
             }],
         };
-        
-        let response = self.http_client
+
+        let response = self
+            .http_client
             .post(CLAUDE_API_URL)
             .header("x-api-key", &self.api_key)
             .header("anthropic-version", ANTHROPIC_VERSION)
@@ -143,34 +148,42 @@ ESSENTIAL REQUIREMENTS:
             .send()
             .await
             .map_err(|e| format!("Failed to send request: {}", e))?;
-        
+
         if !response.status().is_success() {
             let status = response.status();
             let error_text = response.text().await.unwrap_or_default();
-            return Err(format!("API request failed with status {}: {}", status, error_text));
+            return Err(format!(
+                "API request failed with status {}: {}",
+                status, error_text
+            ));
         }
-        
+
         let claude_response: ClaudeResponse = response
             .json()
             .await
             .map_err(|e| format!("Failed to parse response: {}", e))?;
-        
-        let content = claude_response.content
+
+        let content = claude_response
+            .content
             .first()
             .ok_or("No content in response")?
             .text
             .trim();
-        
+
         // Parse the JSON response
-        serde_json::from_str::<LatinWordResult>(content)
-            .map_err(|e| format!("Failed to parse Latin word result: {}. Response was: {}", e, content))
+        serde_json::from_str::<LatinWordResult>(content).map_err(|e| {
+            format!(
+                "Failed to parse Latin word result: {}. Response was: {}",
+                e, content
+            )
+        })
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_latin_word_result_serialization() {
         let result = LatinWordResult {
@@ -180,20 +193,23 @@ mod tests {
             principal_parts: None,
             stems: None,
         };
-        
+
         let json = serde_json::to_string(&result).unwrap();
         assert!(json.contains("amīcus"));
         assert!(json.contains("noun - masculine, 2nd declension"));
         assert!(json.contains("friend"));
-        
+
         let deserialized: LatinWordResult = serde_json::from_str(&json).unwrap();
         assert_eq!(deserialized.word_with_macrons, "amīcus");
-        assert_eq!(deserialized.part_of_speech, "noun - masculine, 2nd declension, nominative singular");
+        assert_eq!(
+            deserialized.part_of_speech,
+            "noun - masculine, 2nd declension, nominative singular"
+        );
         assert_eq!(deserialized.definition, "friend");
         assert_eq!(deserialized.principal_parts, None);
         assert_eq!(deserialized.stems, None);
     }
-    
+
     #[tokio::test]
     async fn test_claude_client_creation() {
         // Test that client creation works with API key

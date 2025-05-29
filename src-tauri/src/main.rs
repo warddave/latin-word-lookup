@@ -11,8 +11,8 @@ mod config;
 
 use claude_api::{ClaudeClient, LatinWordResult};
 use config::ConfigManager;
-use tauri::{Emitter, Manager, State};
 use std::sync::Mutex;
+use tauri::{Emitter, Manager, State};
 
 struct AppState {
     config_manager: Mutex<Option<ConfigManager>>,
@@ -38,59 +38,71 @@ async fn lookup_latin_word(
     if word.trim().is_empty() {
         return Err("Please enter a word".to_string());
     }
-    
+
     // Allow Latin alphabet characters including macrons (ā, ē, ī, ō, ū, ȳ)
     if !word.chars().all(|c| {
-        c.is_alphabetic() && (c.is_ascii() || matches!(c, 'ā' | 'ē' | 'ī' | 'ō' | 'ū' | 'ȳ' | 'Ā' | 'Ē' | 'Ī' | 'Ō' | 'Ū' | 'Ȳ'))
+        c.is_alphabetic()
+            && (c.is_ascii()
+                || matches!(
+                    c,
+                    'ā' | 'ē' | 'ī' | 'ō' | 'ū' | 'ȳ' | 'Ā' | 'Ē' | 'Ī' | 'Ō' | 'Ū' | 'Ȳ'
+                ))
     }) {
         return Err("Please enter only Latin alphabet characters (macrons allowed)".to_string());
     }
-    
+
     // Get API key from config
     let api_key = {
-        let state_guard = state.config_manager.lock()
+        let state_guard = state
+            .config_manager
+            .lock()
             .map_err(|_| "Failed to acquire lock on config manager")?;
-        state_guard.as_ref()
+        state_guard
+            .as_ref()
             .ok_or("Config manager not initialized")?
             .get_api_key()
             .ok_or("API key not configured. Please go to Settings to add your Anthropic API key.")?
     };
-    
+
     // Create Claude client and lookup word
     let client = ClaudeClient::new_with_key(api_key);
-    client.lookup_latin_word(&word, custom_prompt.as_deref()).await
+    client
+        .lookup_latin_word(&word, custom_prompt.as_deref())
+        .await
 }
 
 #[tauri::command]
-fn save_api_key(
-    api_key: String,
-    state: State<'_, AppState>,
-) -> Result<(), String> {
-    let state_guard = state.config_manager.lock()
+fn save_api_key(api_key: String, state: State<'_, AppState>) -> Result<(), String> {
+    let state_guard = state
+        .config_manager
+        .lock()
         .map_err(|_| "Failed to acquire lock on config manager")?;
-    state_guard.as_ref()
+    state_guard
+        .as_ref()
         .ok_or("Config manager not initialized")?
         .set_api_key(api_key)
 }
 
 #[tauri::command]
-fn get_api_key(
-    state: State<'_, AppState>,
-) -> Result<Option<String>, String> {
-    let state_guard = state.config_manager.lock()
+fn get_api_key(state: State<'_, AppState>) -> Result<Option<String>, String> {
+    let state_guard = state
+        .config_manager
+        .lock()
         .map_err(|_| "Failed to acquire lock on config manager")?;
-    Ok(state_guard.as_ref()
+    Ok(state_guard
+        .as_ref()
         .ok_or("Config manager not initialized")?
         .get_api_key())
 }
 
 #[tauri::command]
-fn has_api_key(
-    state: State<'_, AppState>,
-) -> Result<bool, String> {
-    let state_guard = state.config_manager.lock()
+fn has_api_key(state: State<'_, AppState>) -> Result<bool, String> {
+    let state_guard = state
+        .config_manager
+        .lock()
         .map_err(|_| "Failed to acquire lock on config manager")?;
-    Ok(state_guard.as_ref()
+    Ok(state_guard
+        .as_ref()
         .ok_or("Config manager not initialized")?
         .has_api_key())
 }
@@ -115,24 +127,28 @@ fn main() {
     let mut builder = tauri::Builder::default();
     #[cfg(not(target_os = "macos"))]
     let builder = tauri::Builder::default();
-    
+
     // Add menu for macOS
     #[cfg(target_os = "macos")]
     {
         use tauri::menu::{MenuBuilder, MenuItemBuilder, PredefinedMenuItem, SubmenuBuilder};
-        
+
         builder = builder.menu(|handle| {
             MenuBuilder::new(handle)
                 .item(
                     &SubmenuBuilder::new(handle, "Latin Word Lookup")
-                        .item(&MenuItemBuilder::new("About Latin Word Lookup")
-                            .id("about")
-                            .build(handle)?)
+                        .item(
+                            &MenuItemBuilder::new("About Latin Word Lookup")
+                                .id("about")
+                                .build(handle)?,
+                        )
                         .separator()
-                        .item(&MenuItemBuilder::new("Preferences...")
-                            .id("preferences")
-                            .accelerator("Cmd+,")
-                            .build(handle)?)
+                        .item(
+                            &MenuItemBuilder::new("Preferences...")
+                                .id("preferences")
+                                .accelerator("Cmd+,")
+                                .build(handle)?,
+                        )
                         .separator()
                         .item(&PredefinedMenuItem::services(handle, None)?)
                         .separator()
@@ -141,10 +157,11 @@ fn main() {
                         .item(&PredefinedMenuItem::show_all(handle, None)?)
                         .separator()
                         .item(&PredefinedMenuItem::quit(handle, None)?)
-                        .build()?)
+                        .build()?,
+                )
                 .build()
         });
-        
+
         builder = builder.on_menu_event(|handle, event| {
             if let Some(window) = handle.get_webview_window("main") {
                 match event.id().as_ref() {
@@ -159,7 +176,7 @@ fn main() {
             }
         });
     }
-    
+
     builder
         .setup(|app| {
             // Initialize config manager
@@ -168,7 +185,7 @@ fn main() {
                 config_manager: Mutex::new(Some(config_manager)),
             };
             app.manage(state);
-            
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
