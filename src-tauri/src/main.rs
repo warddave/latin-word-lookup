@@ -1,4 +1,4 @@
-// Copyright (c) 2024 David Ward
+// Copyright (c) 2025 David Ward
 // Licensed under the MIT License
 
 #![cfg_attr(
