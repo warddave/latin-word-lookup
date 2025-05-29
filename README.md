@@ -36,8 +36,8 @@ This app is **open source and free**. However, it uses [Claude 3.5 Sonnet](https
 ### Download Pre-built Release
 
 Download the latest release for your platform:
-- [Latin Word Lookup v0.1.1 (macOS Apple Silicon)](https://github.com/warddave/latin-word-lookup/releases/download/v0.1.1/Latin.Word.Lookup_0.1.1_aarch64.dmg)
-  - SHA256: `12f665baf4f1e4b74d57a8da99835bd4916d51a6c5acb62aa7ebd1c305c223ed`
+- [Latin Word Lookup v0.1.2 (macOS Apple Silicon)](https://github.com/warddave/latin-word-lookup/releases/download/v0.1.2/Latin.Word.Lookup_0.1.2_aarch64.dmg)
+  - SHA256: `064378f4d32d9c4c45b8c0f3f3733e6ca4a002dbb62942a1518d99cd186b5539`
 
 After downloading:
 1. Open the DMG file
