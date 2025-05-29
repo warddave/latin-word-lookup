@@ -1,6 +1,6 @@
 # Latin Word Lookup
 
-A modern, desktop application for looking up Latin words with detailed grammatical information and macron support. Built with Tauri and powered by Claude AI.
+A modern, desktop application for looking up Latin words with detailed grammatical information and macron support. Built with [Tauri](https://tauri.app) and powered by [Claude AI](https://claude.ai).
 
 ## Features
 
@@ -13,7 +13,7 @@ A modern, desktop application for looking up Latin words with detailed grammatic
   - Tense, mood, and voice for verb forms
 - ⚡ **Offline caching** for previously looked up words (30-day retention)
 - 🎨 **Material Design 3** interface
-- 🤖 **Powered by Claude 3.5 Sonnet** for accurate Latin analysis
+- 🤖 **Powered by [Claude 3.5 Sonnet](https://claude.ai)** for accurate Latin analysis
 - 🛠️ **Custom prompt support** to tailor AI responses
 - ⌨️ **Keyboard shortcuts** (⌘, for Settings on macOS)
 
@@ -24,7 +24,7 @@ A modern, desktop application for looking up Latin words with detailed grammatic
 
 ## Cost
 
-This app is **open source and free**. However, it uses Claude 3.5 Sonnet through your own Claude API account. You pay Anthropic directly based on your API usage. Based on current API pricing, you can expect to pay approximately **$1 per 200-300 word lookups**. Cached lookups (repeated words within 30 days) are free and don't use the API.
+This app is **open source and free**. However, it uses [Claude 3.5 Sonnet](https://claude.ai) through your own Claude API account. You pay Anthropic directly based on your API usage. Based on current API pricing, you can expect to pay approximately **$1 per 200-300 word lookups**. Cached lookups (repeated words within 30 days) are free and don't use the API.
 
 ## Installation
 
@@ -51,7 +51,7 @@ After downloading:
 2. **Node.js** (optional, only if modifying frontend)
    - The frontend is pre-built in the `dist/` directory
 
-3. **Tauri CLI**
+3. **[Tauri](https://tauri.app) CLI**
    ```bash
    cargo install tauri-cli
    ```
