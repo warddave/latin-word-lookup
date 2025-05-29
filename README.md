@@ -82,6 +82,8 @@ cargo tauri dev
 
 ## Usage
 
+![Latin Word Lookup Screenshot](docs/images/app-screenshot.png)
+
 1. **First-time setup**: 
    - Launch the application
    - Go to Settings (⌘, on macOS or via menu)

@@ -1764,6 +1764,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "latin-word-lookup"
+version = "0.1.1"
+dependencies = [
+ "mockito",
+ "open",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tempfile",
+ "tokio",
+ "tokio-test",
+]
+
+[[package]]
 name = "lazy_static"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2556,22 +2572,6 @@ name = "pkg-config"
 version = "0.3.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7edddbd0b52d732b21ad9a5fab5c704c14cd949e5e9a1ec5929a24fded1b904c"
-
-[[package]]
-name = "playground"
-version = "0.1.1"
-dependencies = [
- "mockito",
- "open",
- "reqwest",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tempfile",
- "tokio",
- "tokio-test",
-]
 
 [[package]]
 name = "plist"
