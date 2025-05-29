@@ -24,7 +24,7 @@ A modern, desktop application for looking up Latin words with detailed grammatic
 
 ## Cost
 
-The app uses Claude 3.5 Sonnet for Latin word analysis. Based on current API pricing, you can expect to pay approximately **$1 per 200-300 word lookups**. Cached lookups (repeated words within 30 days) are free and don't use the API.
+The app uses Claude 3.5 Sonnet through your own Claude API account. You pay Anthropic directly based on your API usage. Based on current API pricing, you can expect to pay approximately **$1 per 200-300 word lookups**. Cached lookups (repeated words within 30 days) are free and don't use the API.
 
 ## Installation
 
