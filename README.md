@@ -157,3 +157,9 @@ All critical paths are covered by tests to ensure reliability.
 ## Contributing
 
 Found a bug or have a feature request? Please submit a [GitHub issue or PR](https://github.com/warddave/latin-word-lookup/issues/new). We welcome your feedback and contributions!
+
+## License
+
+Copyright (c) 2025 David Ward
+
+Licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
