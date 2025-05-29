@@ -1,6 +1,6 @@
 [package]
-name = "playground"
-version = "0.1.0"
+name = "latin-word-lookup"
+version = "0.1.1"
 edition = "2021"
 license = "MIT"
 authors = ["David Ward"]
