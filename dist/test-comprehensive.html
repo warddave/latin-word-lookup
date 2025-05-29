@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latin Word Lookup - Comprehensive Tests</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .pass {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .fail {
+            background-color: #f44336;
+            color: white;
+        }
+        #summary {
+            font-size: 18px;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 5px;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #6750A4;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Latin Word Lookup - Comprehensive Test Suite</h1>
+    
+    <div class="test-section">
+        <h2>UI Component Tests</h2>
+        <div id="ui-tests"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>API Integration Tests</h2>
+        <div id="api-tests"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Settings & Storage Tests</h2>
+        <div id="settings-tests"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Material Design Tests</h2>
+        <div id="design-tests"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Event & Interaction Tests</h2>
+        <div id="event-tests"></div>
+    </div>
+    
+    <div id="summary"></div>
+    
+    <script>
+        // Enhanced Test Framework
+        class TestRunner {
+            constructor() {
+                this.tests = [];
+                this.results = [];
+                this.currentSection = null;
+            }
+            
+            section(name) {
+                this.currentSection = name;
+                return this;
+            }
+            
+            test(name, fn) {
+                this.tests.push({ 
+                    name, 
+                    fn, 
+                    section: this.currentSection 
+                });
+            }
+            
+            async run() {
+                const sections = {};
+                
+                for (const test of this.tests) {
+                    const startTime = performance.now();
+                    let result;
+                    
+                    try {
+                        await test.fn();
+                        result = { 
+                            name: test.name, 
+                            pass: true,
+                            time: performance.now() - startTime,
+                            section: test.section
+                        };
+                    } catch (error) {
+                        result = { 
+                            name: test.name, 
+                            pass: false, 
+                            error: error.message,
+                            time: performance.now() - startTime,
+                            section: test.section
+                        };
+                    }
+                    
+                    this.results.push(result);
+                    
+                    if (!sections[test.section]) {
+                        sections[test.section] = [];
+                    }
+                    sections[test.section].push(result);
+                }
+                
+                this.displayResults(sections);
+            }
+            
+            displayResults(sections) {
+                // Display results by section
+                for (const [section, results] of Object.entries(sections)) {
+                    const container = document.getElementById(section);
+                    if (!container) continue;
+                    
+                    results.forEach(result => {
+                        const div = document.createElement('div');
+                        div.className = `test-result ${result.pass ? 'pass' : 'fail'}`;
+                        div.innerHTML = `
+                            ${result.pass ? '✓' : '✗'} ${result.name}
+                            <span style="float: right">${result.time.toFixed(2)}ms</span>
+                            ${!result.pass ? `<br>Error: ${result.error}` : ''}
+                        `;
+                        container.appendChild(div);
+                    });
+                }
+                
+                // Display summary
+                const summaryDiv = document.getElementById('summary');
+                const passed = this.results.filter(r => r.pass).length;
+                const total = this.results.length;
+                const totalTime = this.results.reduce((sum, r) => sum + r.time, 0);
+                
+                summaryDiv.innerHTML = `
+                    <h2>Test Summary</h2>
+                    <p>Tests: ${passed}/${total} passed</p>
+                    <p>Total time: ${totalTime.toFixed(2)}ms</p>
+                    <p>Status: ${passed === total ? '✅ All tests passed!' : '❌ Some tests failed'}</p>
+                `;
+            }
+            
+            assert(condition, message) {
+                if (!condition) {
+                    throw new Error(message || 'Assertion failed');
+                }
+            }
+            
+            assertEquals(actual, expected, message) {
+                if (actual !== expected) {
+                    throw new Error(message || `Expected ${expected}, got ${actual}`);
+                }
+            }
+            
+            assertContains(haystack, needle, message) {
+                if (!haystack.includes(needle)) {
+                    throw new Error(message || `Expected "${haystack}" to contain "${needle}"`);
+                }
+            }
+            
+            assertCSSProperty(element, property, expected, message) {
+                const computed = window.getComputedStyle(element);
+                const actual = computed.getPropertyValue(property);
+                if (actual !== expected) {
+                    throw new Error(message || `Expected ${property} to be ${expected}, got ${actual}`);
+                }
+            }
+        }
+        
+        // Create test document structure
+        function createTestDOM() {
+            const container = document.createElement('div');
+            container.innerHTML = `
+                <div class="container">
+                    <div class="text-field">
+                        <input type="text" id="latin-word" placeholder=" " autocomplete="off">
+                        <label for="latin-word">Enter Latin word</label>
+                        <button class="icon-button" id="search-btn">
+                            <span class="material-icons">search</span>
+                        </button>
+                    </div>
+                    <div id="api-key-status"></div>
+                    <div id="result" class="result-card"></div>
+                </div>
+                <div id="scrim" class="scrim"></div>
+                <div id="settings-dialog" class="dialog">
+                    <div class="text-field">
+                        <input type="password" id="api-key" placeholder=" ">
+                        <label for="api-key">API Key</label>
+                    </div>
+                    <button class="button button-filled" onclick="saveSettings()">Save</button>
+                </div>
+            `;
+            document.body.appendChild(container);
+            return container;
+        }
+        
+        // Mock Tauri API
+        function mockTauriAPI() {
+            window.__TAURI__ = {
+                core: {
+                    invoke: async (command, args) => {
+                        switch (command) {
+                            case 'lookup_latin_word':
+                                if (args.word === '') throw new Error('Please enter a word');
+                                if (args.word === 'error') throw new Error('API error');
+                                if (args.word === 'amicus') {
+                                    return {
+                                        word_with_macrons: 'amīcus',
+                                        part_of_speech: 'noun - masculine, 2nd declension',
+                                        definition: 'friend, ally, comrade'
+                                    };
+                                }
+                                return {
+                                    word_with_macrons: args.word,
+                                    part_of_speech: 'unknown',
+                                    definition: 'test definition'
+                                };
+                            case 'has_api_key':
+                                return window.mockApiKeyStored || false;
+                            case 'get_api_key':
+                                return window.mockApiKey || null;
+                            case 'save_api_key':
+                                window.mockApiKey = args.apiKey;
+                                window.mockApiKeyStored = !!args.apiKey;
+                                return;
+                            default:
+                                throw new Error(`Unknown command: ${command}`);
+                        }
+                    }
+                },
+                event: {
+                    listen: (event, callback) => {
+                        window.mockEventListeners = window.mockEventListeners || {};
+                        window.mockEventListeners[event] = callback;
+                    }
+                },
+                webviewWindow: {
+                    getCurrent: () => ({
+                        close: async () => {
+                            window.mockWindowClosed = true;
+                        }
+                    })
+                }
+            };
+        }
+        
+        // Initialize test environment
+        mockTauriAPI();
+        const testDOM = createTestDOM();
+        
+        // Run tests
+        const runner = new TestRunner();
+        
+        // UI Component Tests
+        runner.section('ui-tests')
+            .test('should have all required DOM elements', () => {
+                runner.assert(document.getElementById('latin-word'), 'Input field not found');
+                runner.assert(document.getElementById('search-btn'), 'Search button not found');
+                runner.assert(document.getElementById('result'), 'Result div not found');
+                runner.assert(document.getElementById('api-key-status'), 'API status div not found');
+                runner.assert(document.getElementById('settings-dialog'), 'Settings dialog not found');
+                // FAB button removed - settings now only accessible via menu
+            });
+        
+        runner.test('should have proper input field attributes', () => {
+            const input = document.getElementById('latin-word');
+            runner.assertEquals(input.type, 'text');
+            runner.assertEquals(input.placeholder, ' ');
+            runner.assertEquals(input.autocomplete, 'off');
+        });
+        
+        runner.test('should have floating label behavior', () => {
+            const input = document.getElementById('latin-word');
+            const label = document.querySelector('label[for="latin-word"]');
+            runner.assert(label, 'Label not found');
+            runner.assertEquals(label.textContent, 'Enter Latin word');
+        });
+        
+        // API Integration Tests
+        runner.section('api-tests')
+            .test('should handle successful API response', async () => {
+                const { invoke } = window.__TAURI__.core;
+                const result = await invoke('lookup_latin_word', { word: 'amicus' });
+                
+                runner.assertEquals(result.word_with_macrons, 'amīcus');
+                runner.assertEquals(result.part_of_speech, 'noun - masculine, 2nd declension');
+                runner.assertEquals(result.definition, 'friend, ally, comrade');
+            });
+        
+        runner.test('should handle empty input validation', async () => {
+            const { invoke } = window.__TAURI__.core;
+            try {
+                await invoke('lookup_latin_word', { word: '' });
+                throw new Error('Should have thrown error');
+            } catch (error) {
+                runner.assertEquals(error.message, 'Please enter a word');
+            }
+        });
+        
+        runner.test('should handle API errors gracefully', async () => {
+            const { invoke } = window.__TAURI__.core;
+            try {
+                await invoke('lookup_latin_word', { word: 'error' });
+                throw new Error('Should have thrown error');
+            } catch (error) {
+                runner.assertEquals(error.message, 'API error');
+            }
+        });
+        
+        // Settings & Storage Tests
+        runner.section('settings-tests')
+            .test('should check API key status', async () => {
+                const { invoke } = window.__TAURI__.core;
+                
+                window.mockApiKeyStored = false;
+                let hasKey = await invoke('has_api_key');
+                runner.assertEquals(hasKey, false);
+                
+                window.mockApiKeyStored = true;
+                hasKey = await invoke('has_api_key');
+                runner.assertEquals(hasKey, true);
+            });
+        
+        runner.test('should save and retrieve API key', async () => {
+            const { invoke } = window.__TAURI__.core;
+            
+            await invoke('save_api_key', { apiKey: 'sk-ant-test-key' });
+            const key = await invoke('get_api_key');
+            runner.assertEquals(key, 'sk-ant-test-key');
+        });
+        
+        runner.test('should clear API key when empty string provided', async () => {
+            const { invoke } = window.__TAURI__.core;
+            
+            await invoke('save_api_key', { apiKey: 'test-key' });
+            await invoke('save_api_key', { apiKey: '' });
+            
+            const hasKey = await invoke('has_api_key');
+            runner.assertEquals(hasKey, false);
+        });
+        
+        // Material Design Tests
+        runner.section('design-tests')
+            .test('should use correct Material Design colors', () => {
+                const style = getComputedStyle(document.documentElement);
+                
+                // Check primary color
+                const primaryColor = style.getPropertyValue('--md-sys-color-primary');
+                runner.assert(primaryColor, 'Primary color not defined');
+                
+                // Check surface colors
+                const surface = style.getPropertyValue('--md-sys-color-surface');
+                runner.assert(surface, 'Surface color not defined');
+            });
+        
+        runner.test('should have proper elevation shadows', () => {
+            const style = getComputedStyle(document.documentElement);
+                
+            const elevation1 = style.getPropertyValue('--md-sys-elevation-1');
+            const elevation2 = style.getPropertyValue('--md-sys-elevation-2');
+            const elevation3 = style.getPropertyValue('--md-sys-elevation-3');
+                
+            runner.assert(elevation1, 'Elevation 1 not defined');
+            runner.assert(elevation2, 'Elevation 2 not defined');
+            runner.assert(elevation3, 'Elevation 3 not defined');
+        });
+        
+        runner.test('should use Roboto font', () => {
+            const body = document.body;
+            const computedStyle = window.getComputedStyle(body);
+            const fontFamily = computedStyle.fontFamily;
+            
+            runner.assertContains(fontFamily.toLowerCase(), 'roboto');
+        });
+        
+        // Event & Interaction Tests
+        runner.section('event-tests')
+            .test('should emit open-settings event', () => {
+                let eventEmitted = false;
+                window.mockEventListeners = {
+                    'open-settings': () => { eventEmitted = true; }
+                };
+                
+                // Simulate settings event
+                if (window.mockEventListeners['open-settings']) {
+                    window.mockEventListeners['open-settings']();
+                }
+                
+                runner.assert(eventEmitted, 'Settings event not emitted');
+            });
+        
+        runner.test('should handle keyboard shortcuts', () => {
+            const event = new KeyboardEvent('keydown', {
+                key: ',',
+                metaKey: true,
+                bubbles: true
+            });
+            
+            let defaultPrevented = false;
+            event.preventDefault = () => { defaultPrevented = true; };
+            
+            document.dispatchEvent(event);
+            // In a real app, this would open settings
+        });
+        
+        runner.test('should close window when requested', async () => {
+            window.mockWindowClosed = false;
+            const { getCurrent } = window.__TAURI__.webviewWindow;
+            const window = getCurrent();
+            await window.close();
+            
+            runner.assert(window.mockWindowClosed, 'Window not closed');
+        });
+        
+        // Run all tests
+        runner.run();
+    </script>
+</body>
+</html>

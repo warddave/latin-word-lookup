@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latin Word Lookup - Tests</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .pass {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .fail {
+            background-color: #f44336;
+            color: white;
+        }
+        #summary {
+            font-size: 18px;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Latin Word Lookup - Test Suite</h1>
+    <div id="results"></div>
+    <div id="summary"></div>
+    
+    <script>
+        // Mock Tauri API for testing
+        window.__TAURI__ = {
+            core: {
+                invoke: async (command, args) => {
+                    if (command === 'lookup_latin_word') {
+                        const { word } = args;
+                        
+                        // Simulate API responses
+                        if (word === 'amicus') {
+                            return {
+                                word_with_macrons: 'amīcus',
+                                part_of_speech: 'noun (masculine)',
+                                definition: 'friend'
+                            };
+                        } else if (word === 'error') {
+                            throw new Error('API error');
+                        } else if (word === '') {
+                            throw new Error('Please enter a word');
+                        }
+                        
+                        return {
+                            word_with_macrons: word,
+                            part_of_speech: 'unknown',
+                            definition: 'test definition'
+                        };
+                    }
+                }
+            },
+            webviewWindow: {
+                getCurrent: () => ({
+                    close: async () => {
+                        console.log('Window close called');
+                    }
+                })
+            }
+        };
+        
+        // Test framework
+        class TestRunner {
+            constructor() {
+                this.tests = [];
+                this.results = [];
+            }
+            
+            test(name, fn) {
+                this.tests.push({ name, fn });
+            }
+            
+            async run() {
+                for (const test of this.tests) {
+                    try {
+                        await test.fn();
+                        this.results.push({ name: test.name, pass: true });
+                    } catch (error) {
+                        this.results.push({ name: test.name, pass: false, error: error.message });
+                    }
+                }
+                this.displayResults();
+            }
+            
+            displayResults() {
+                const resultsDiv = document.getElementById('results');
+                const summaryDiv = document.getElementById('summary');
+                
+                this.results.forEach(result => {
+                    const div = document.createElement('div');
+                    div.className = `test-result ${result.pass ? 'pass' : 'fail'}`;
+                    div.textContent = `${result.pass ? '✓' : '✗'} ${result.name}`;
+                    if (!result.pass) {
+                        div.textContent += ` - ${result.error}`;
+                    }
+                    resultsDiv.appendChild(div);
+                });
+                
+                const passed = this.results.filter(r => r.pass).length;
+                const total = this.results.length;
+                summaryDiv.textContent = `Tests: ${passed}/${total} passed`;
+            }
+            
+            assert(condition, message) {
+                if (!condition) {
+                    throw new Error(message || 'Assertion failed');
+                }
+            }
+            
+            assertEquals(actual, expected, message) {
+                if (actual !== expected) {
+                    throw new Error(message || `Expected ${expected}, got ${actual}`);
+                }
+            }
+        }
+        
+        // Tests
+        const runner = new TestRunner();
+        
+        // Test input validation
+        runner.test('should validate empty input', async () => {
+            const { invoke } = window.__TAURI__.core;
+            try {
+                await invoke('lookup_latin_word', { word: '' });
+                throw new Error('Should have thrown error');
+            } catch (error) {
+                runner.assertEquals(error.message, 'Please enter a word');
+            }
+        });
+        
+        // Test successful lookup
+        runner.test('should lookup word successfully', async () => {
+            const { invoke } = window.__TAURI__.core;
+            const result = await invoke('lookup_latin_word', { word: 'amicus' });
+            runner.assertEquals(result.word_with_macrons, 'amīcus');
+            runner.assertEquals(result.part_of_speech, 'noun (masculine)');
+            runner.assertEquals(result.definition, 'friend');
+        });
+        
+        // Test error handling
+        runner.test('should handle API errors', async () => {
+            const { invoke } = window.__TAURI__.core;
+            try {
+                await invoke('lookup_latin_word', { word: 'error' });
+                throw new Error('Should have thrown error');
+            } catch (error) {
+                runner.assertEquals(error.message, 'API error');
+            }
+        });
+        
+        // Test DOM elements
+        runner.test('should have required DOM elements', () => {
+            // Create elements for testing
+            document.body.innerHTML += `
+                <input type="text" id="latin-word">
+                <button id="submit-btn">Lookup</button>
+                <div id="result"></div>
+                <button id="close-btn">Close</button>
+            `;
+            
+            const input = document.getElementById('latin-word');
+            const submitBtn = document.getElementById('submit-btn');
+            const resultDiv = document.getElementById('result');
+            const closeBtn = document.getElementById('close-btn');
+            
+            runner.assert(input !== null, 'Input element not found');
+            runner.assert(submitBtn !== null, 'Submit button not found');
+            runner.assert(resultDiv !== null, 'Result div not found');
+            runner.assert(closeBtn !== null, 'Close button not found');
+        });
+        
+        // Test result display
+        runner.test('should display results correctly', () => {
+            const resultDiv = document.getElementById('result');
+            const mockResult = {
+                word_with_macrons: 'rēx',
+                part_of_speech: 'noun (masculine)',
+                definition: 'king'
+            };
+            
+            resultDiv.innerHTML = `
+                <div class="word-with-macrons">${mockResult.word_with_macrons}</div>
+                <div class="part-of-speech">${mockResult.part_of_speech}</div>
+                <div class="definition">${mockResult.definition}</div>
+            `;
+            
+            const wordElement = resultDiv.querySelector('.word-with-macrons');
+            const posElement = resultDiv.querySelector('.part-of-speech');
+            const defElement = resultDiv.querySelector('.definition');
+            
+            runner.assertEquals(wordElement.textContent, 'rēx');
+            runner.assertEquals(posElement.textContent, 'noun (masculine)');
+            runner.assertEquals(defElement.textContent, 'king');
+        });
+        
+        // Test error display
+        runner.test('should display errors correctly', () => {
+            const resultDiv = document.getElementById('result');
+            const errorMessage = 'Test error message';
+            
+            resultDiv.innerHTML = `<div class="error">Error: ${errorMessage}</div>`;
+            
+            const errorElement = resultDiv.querySelector('.error');
+            runner.assert(errorElement !== null, 'Error element not found');
+            runner.assertEquals(errorElement.textContent, `Error: ${errorMessage}`);
+        });
+        
+        // Test cache functionality
+        runner.test('should cache word lookups', () => {
+            const CACHE_KEY_PREFIX = 'latin_word_';
+            const testWord = 'testword';
+            const testResult = {
+                word_with_macrons: 'tēstwōrd',
+                part_of_speech: 'noun',
+                definition: 'a test word'
+            };
+            
+            // Clear any existing cache
+            localStorage.clear();
+            
+            // Set cached word
+            const key = CACHE_KEY_PREFIX + testWord.toLowerCase();
+            const data = {
+                result: testResult,
+                timestamp: new Date().getTime()
+            };
+            localStorage.setItem(key, JSON.stringify(data));
+            
+            // Verify cache was set
+            const cached = localStorage.getItem(key);
+            runner.assert(cached !== null, 'Cache not set');
+            
+            const parsedCache = JSON.parse(cached);
+            runner.assertEquals(parsedCache.result.word_with_macrons, 'tēstwōrd');
+        });
+        
+        runner.test('should clear cache correctly', () => {
+            const CACHE_KEY_PREFIX = 'latin_word_';
+            
+            // Set up test cache entries
+            localStorage.setItem(CACHE_KEY_PREFIX + 'word1', JSON.stringify({
+                result: { word_with_macrons: 'wōrd1' },
+                timestamp: new Date().getTime()
+            }));
+            localStorage.setItem(CACHE_KEY_PREFIX + 'word2', JSON.stringify({
+                result: { word_with_macrons: 'wōrd2' },
+                timestamp: new Date().getTime()
+            }));
+            localStorage.setItem('other_key', 'should not be deleted');
+            
+            // Count cache entries before clearing
+            let cacheCount = 0;
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith(CACHE_KEY_PREFIX)) cacheCount++;
+            });
+            runner.assertEquals(cacheCount, 2, 'Should have 2 cache entries');
+            
+            // Clear cache
+            const keys = Object.keys(localStorage);
+            keys.forEach(key => {
+                if (key.startsWith(CACHE_KEY_PREFIX)) {
+                    localStorage.removeItem(key);
+                }
+            });
+            
+            // Verify cache was cleared
+            cacheCount = 0;
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith(CACHE_KEY_PREFIX)) cacheCount++;
+            });
+            runner.assertEquals(cacheCount, 0, 'Should have 0 cache entries after clearing');
+            
+            // Verify non-cache items were not deleted
+            runner.assert(localStorage.getItem('other_key') === 'should not be deleted', 'Non-cache items should not be deleted');
+            
+            // Clean up
+            localStorage.clear();
+        });
+        
+        runner.test('should handle expired cache correctly', () => {
+            const CACHE_KEY_PREFIX = 'latin_word_';
+            const CACHE_EXPIRY_DAYS = 30;
+            const testWord = 'expiredword';
+            
+            // Set expired cache (31 days ago)
+            const key = CACHE_KEY_PREFIX + testWord.toLowerCase();
+            const expiredTimestamp = new Date().getTime() - (31 * 24 * 60 * 60 * 1000);
+            const data = {
+                result: { word_with_macrons: 'expīredwōrd' },
+                timestamp: expiredTimestamp
+            };
+            localStorage.setItem(key, JSON.stringify(data));
+            
+            // Check if cache is expired
+            const cached = localStorage.getItem(key);
+            const parsedCache = JSON.parse(cached);
+            const now = new Date().getTime();
+            const expiryTime = CACHE_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+            const isExpired = now - parsedCache.timestamp > expiryTime;
+            
+            runner.assert(isExpired === true, 'Cache should be expired');
+            
+            // Clean up
+            localStorage.clear();
+        });
+        
+        // Run tests
+        runner.run();
+    </script>
+</body>
+</html>

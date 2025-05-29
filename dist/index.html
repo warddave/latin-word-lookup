@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latin Word Lookup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            /* Material Design 3 Dark Color Scheme */
+            --md-sys-color-primary: #D0BCFF;
+            --md-sys-color-on-primary: #371E73;
+            --md-sys-color-primary-container: #4F378B;
+            --md-sys-color-on-primary-container: #EADDFF;
+            --md-sys-color-secondary: #CCC2DC;
+            --md-sys-color-on-secondary: #332D41;
+            --md-sys-color-secondary-container: #4A4458;
+            --md-sys-color-on-secondary-container: #E8DEF8;
+            --md-sys-color-tertiary: #EFB8C8;
+            --md-sys-color-on-tertiary: #492532;
+            --md-sys-color-tertiary-container: #633B48;
+            --md-sys-color-on-tertiary-container: #FFD8E4;
+            --md-sys-color-error: #F2B8B5;
+            --md-sys-color-on-error: #601410;
+            --md-sys-color-error-container: #8C1D18;
+            --md-sys-color-on-error-container: #F9DEDC;
+            --md-sys-color-surface: #141218;
+            --md-sys-color-on-surface: #E6E0E9;
+            --md-sys-color-surface-variant: #49454F;
+            --md-sys-color-on-surface-variant: #CAC4D0;
+            --md-sys-color-outline: #938F99;
+            --md-sys-color-outline-variant: #49454F;
+            --md-sys-color-surface-container-lowest: #0F0D13;
+            --md-sys-color-surface-container-low: #1D1B20;
+            --md-sys-color-surface-container: #211F26;
+            --md-sys-color-surface-container-high: #2B2930;
+            --md-sys-color-surface-container-highest: #36343B;
+            
+            /* Typography */
+            --md-sys-typescale-display-large: 400 57px/64px Roboto;
+            --md-sys-typescale-headline-large: 400 32px/40px Roboto;
+            --md-sys-typescale-headline-medium: 400 28px/36px Roboto;
+            --md-sys-typescale-title-large: 400 22px/28px Roboto;
+            --md-sys-typescale-title-medium: 500 16px/24px Roboto;
+            --md-sys-typescale-body-large: 400 16px/24px Roboto;
+            --md-sys-typescale-body-medium: 400 14px/20px Roboto;
+            --md-sys-typescale-label-large: 500 14px/20px Roboto;
+            
+            /* Elevation */
+            --md-sys-elevation-1: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+            --md-sys-elevation-2: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+            --md-sys-elevation-3: 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            font: var(--md-sys-typescale-body-large);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: var(--md-sys-color-surface-container);
+            border-radius: 28px;
+            padding: 32px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: var(--md-sys-elevation-1);
+        }
+        
+        h1 {
+            font: var(--md-sys-typescale-headline-large);
+            color: var(--md-sys-color-on-surface);
+            margin: 0 0 32px 0;
+            text-align: center;
+        }
+        
+        /* Text Field */
+        .text-field {
+            position: relative;
+            margin-bottom: 16px;
+        }
+        
+        .text-field input,
+        .text-field textarea {
+            width: 100%;
+            padding: 16px;
+            padding-right: 56px;
+            font: var(--md-sys-typescale-body-large);
+            color: var(--md-sys-color-on-surface);
+            background: var(--md-sys-color-surface-container-highest);
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: 12px;
+            outline: none;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .text-field textarea {
+            padding-right: 16px;
+        }
+        
+        .text-field input:focus,
+        .text-field textarea:focus {
+            border-color: var(--md-sys-color-primary);
+            border-width: 2px;
+            padding: 15px;
+            padding-right: 55px;
+        }
+
+        .text-field textarea:focus {
+            padding-right: 15px;
+        }
+        
+        .text-field label {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font: var(--md-sys-typescale-body-large);
+            color: var(--md-sys-color-on-surface-variant);
+            background: var(--md-sys-color-surface-container-highest);
+            padding: 0 4px;
+            pointer-events: none;
+            transition: all 0.2s ease;
+        }
+        
+        .text-field input:focus + label,
+        .text-field input:not(:placeholder-shown) + label,
+        .text-field textarea:focus + label,
+        .text-field textarea:not(:placeholder-shown) + label {
+            top: 0;
+            font: var(--md-sys-typescale-body-medium);
+            color: var(--md-sys-color-primary);
+        }
+        
+        /* Icon Button */
+        .icon-button {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: none;
+            color: var(--md-sys-color-on-surface-variant);
+            cursor: pointer;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .icon-button:hover {
+            background: var(--md-sys-color-on-surface-variant);
+            background: rgba(0, 0, 0, 0.08);
+        }
+        
+        .icon-button:active {
+            background: rgba(0, 0, 0, 0.12);
+        }
+        
+        /* API Key Status */
+        .status-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font: var(--md-sys-typescale-label-large);
+            margin-bottom: 24px;
+        }
+        
+        .status-chip.configured {
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+        }
+        
+        .status-chip.not-configured {
+            background: var(--md-sys-color-error-container);
+            color: var(--md-sys-color-on-error-container);
+        }
+        
+        .status-chip .material-icons {
+            font-size: 18px;
+        }
+        
+        /* Results Card */
+        .result-card {
+            background: var(--md-sys-color-surface-container-low);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.3s ease;
+        }
+        
+        .result-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .word-with-macrons {
+            font: var(--md-sys-typescale-headline-medium);
+            color: var(--md-sys-color-primary);
+            margin-bottom: 8px;
+        }
+        
+        .part-of-speech {
+            font: var(--md-sys-typescale-title-medium);
+            color: var(--md-sys-color-secondary);
+            margin-bottom: 16px;
+        }
+        
+        .definition {
+            font: var(--md-sys-typescale-body-large);
+            color: var(--md-sys-color-on-surface);
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        
+        .principal-parts {
+            font: var(--md-sys-typescale-body-medium);
+            color: var(--md-sys-color-on-surface-variant);
+            margin-bottom: 12px;
+            padding: 12px;
+            background: var(--md-sys-color-surface-variant);
+            border-radius: 8px;
+        }
+        
+        .stems {
+            font: var(--md-sys-typescale-body-medium);
+            color: var(--md-sys-color-on-surface-variant);
+            padding: 12px;
+            background: var(--md-sys-color-surface-variant);
+            border-radius: 8px;
+        }
+        
+        /* Error State */
+        .error-message {
+            background: var(--md-sys-color-error-container);
+            color: var(--md-sys-color-on-error-container);
+            padding: 16px;
+            border-radius: 12px;
+            font: var(--md-sys-typescale-body-medium);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .error-message .material-icons {
+            color: var(--md-sys-color-error);
+        }
+        
+        /* Success State */
+        .success-message {
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            padding: 16px;
+            border-radius: 12px;
+            font: var(--md-sys-typescale-body-medium);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            color: var(--md-sys-color-on-surface-variant);
+            font: var(--md-sys-typescale-body-large);
+        }
+        
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--md-sys-color-surface-variant);
+            border-top-color: var(--md-sys-color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Modal / Dialog for About */
+        .scrim {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.32);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .scrim.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: var(--md-sys-color-surface-container-high);
+            border-radius: 28px;
+            padding: 24px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: var(--md-sys-elevation-3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+        
+        .dialog.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .dialog-header {
+            margin-bottom: 24px;
+        }
+        
+        .dialog-title {
+            font: var(--md-sys-typescale-headline-medium);
+            color: var(--md-sys-color-on-surface);
+            margin: 0;
+        }
+        
+        .dialog-content {
+            margin-bottom: 24px;
+        }
+        
+        .dialog-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        
+        /* Buttons */
+        .button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 20px;
+            font: var(--md-sys-typescale-label-large);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .button-filled {
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+        }
+        
+        .button-filled:hover {
+            box-shadow: var(--md-sys-elevation-1);
+        }
+        
+        .button-tonal {
+            background: var(--md-sys-color-secondary-container);
+            color: var(--md-sys-color-on-secondary-container);
+        }
+        
+        .button-tonal:hover {
+            box-shadow: var(--md-sys-elevation-1);
+        }
+        
+        .button-text {
+            background: transparent;
+            color: var(--md-sys-color-primary);
+        }
+        
+        .button-text:hover {
+            background: rgba(var(--md-sys-color-primary), 0.08);
+        }
+        
+        
+        /* Helper Text */
+        .helper-text {
+            font: var(--md-sys-typescale-body-medium);
+            color: var(--md-sys-color-on-surface-variant);
+            margin-top: 4px;
+            padding: 0 16px;
+        }
+
+        /* Page Layout */
+        .page {
+            width: 100%;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .page.hidden {
+            display: none !important;
+        }
+
+        #main-page {
+            display: flex;
+        }
+
+        #settings-page {
+            display: none;
+            align-items: flex-start;
+            padding-top: 40px;
+        }
+
+        #settings-page:not(.hidden) {
+            display: flex;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            flex: 1;
+        }
+
+        /* Settings Content */
+        .settings-content {
+            margin-bottom: 32px;
+        }
+
+        /* Page Actions */
+        .page-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            padding-top: 24px;
+            border-top: 1px solid var(--md-sys-color-outline-variant);
+        }
+
+        /* Container for settings page */
+        #settings-page .container {
+            width: 100%;
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div id="main-page" class="page">
+        <div class="container">
+            <h1>Latin Word Lookup</h1>
+            
+            <div class="text-field">
+                <input type="text" id="latin-word" placeholder=" " autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off">
+                <label for="latin-word">Enter Latin word</label>
+                <button class="icon-button" id="search-btn" title="Search">
+                    <span class="material-icons">search</span>
+                </button>
+            </div>
+            <div class="helper-text">Type a Latin word to see its definition and grammatical context</div>
+            
+            <div id="api-key-status"></div>
+            
+            <div id="result" class="result-card"></div>
+        </div>
+    </div>
+
+    <div id="settings-page" class="page hidden">
+        <div class="container">
+            <div class="page-header">
+                <button class="icon-button" onclick="closeSettings()" title="Back">
+                    <span class="material-icons">arrow_back</span>
+                </button>
+                <h1>Settings</h1>
+            </div>
+            
+            <div class="settings-content">
+                <div class="text-field">
+                    <input type="password" id="api-key" placeholder=" " autocomplete="off" spellcheck="false">
+                    <label for="api-key">Anthropic API Key</label>
+                </div>
+                <div class="helper-text">
+                    Your API key is stored locally and securely<br>
+                    <a href="#" onclick="openAnthropicLink(event)" style="color: var(--md-sys-color-primary); text-decoration: none; cursor: pointer;">Get an API key from Anthropic →</a>
+                </div>
+                
+                <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--md-sys-color-outline-variant);">
+                    <h3 style="font: var(--md-sys-typescale-title-medium); color: var(--md-sys-color-on-surface); margin: 0 0 12px 0;">Custom Prompt</h3>
+                    <div class="text-field" style="margin-bottom: 12px;">
+                        <textarea id="custom-prompt" placeholder=" " autocomplete="off" spellcheck="false" rows="3" style="resize: vertical; min-height: 80px;"></textarea>
+                        <label for="custom-prompt">Additional instructions for the LLM</label>
+                    </div>
+                    <div class="helper-text" style="margin-bottom: 24px;">
+                        This text will be added to the system prompt sent to the AI model. Use it to customize how words are analyzed or displayed.
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--md-sys-color-outline-variant);">
+                    <h3 style="font: var(--md-sys-typescale-title-medium); color: var(--md-sys-color-on-surface); margin: 0 0 12px 0;">Cache Management</h3>
+                    <p style="font: var(--md-sys-typescale-body-medium); color: var(--md-sys-color-on-surface-variant); margin: 0 0 12px 0;">
+                        Word lookups are cached for 30 days to improve performance.
+                    </p>
+                    <button class="button button-tonal" onclick="clearCache()" style="width: 100%;">
+                        <span class="material-icons" style="font-size: 18px; margin-right: 8px;">delete</span>
+                        Clear Cache
+                    </button>
+                </div>
+            </div>
+            
+            <div class="page-actions">
+                <button class="button button-text" onclick="closeSettings()">Cancel</button>
+                <button class="button button-filled" onclick="saveSettings()">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- About Dialog -->
+    <div id="scrim" class="scrim"></div>
+    <div id="about-dialog" class="dialog">
+        <div class="dialog-header">
+            <h2 class="dialog-title">About</h2>
+        </div>
+        <div class="dialog-content" style="text-align: center;">
+            <h3 style="margin: 0 0 8px 0; font: var(--md-sys-typescale-title-large); color: var(--md-sys-color-on-surface);">Latin Word Lookup</h3>
+            <p id="app-version" style="margin: 0 0 16px 0; font: var(--md-sys-typescale-body-large); color: var(--md-sys-color-on-surface-variant);">Version ...</p>
+            
+            <div style="text-align: left; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--md-sys-color-outline-variant);">
+                <p style="margin: 0 0 8px 0; font: var(--md-sys-typescale-body-medium); color: var(--md-sys-color-on-surface-variant);">
+                    Copyright © 2024 David Ward
+                </p>
+                <p style="margin: 0 0 12px 0; font: var(--md-sys-typescale-body-small); color: var(--md-sys-color-on-surface-variant);">
+                    Licensed under the MIT License
+                </p>
+                
+                <details style="margin-top: 12px;">
+                    <summary style="cursor: pointer; font: var(--md-sys-typescale-body-medium); color: var(--md-sys-color-primary); margin-bottom: 8px;">
+                        Open Source Acknowledgements
+                    </summary>
+                    <div style="font: var(--md-sys-typescale-body-small); color: var(--md-sys-color-on-surface-variant); line-height: 1.6; max-height: 200px; overflow-y: auto; padding: 8px 0;">
+                        <p style="margin: 0 0 8px 0;">This software is built with:</p>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li><strong>Tauri</strong> - Apache-2.0/MIT</li>
+                            <li><strong>Material Icons</strong> - Apache-2.0</li>
+                            <li><strong>Roboto Font</strong> - Apache-2.0</li>
+                            <li><strong>Rust Libraries:</strong>
+                                <ul style="margin: 4px 0 0 0; padding-left: 20px;">
+                                    <li>serde - MIT/Apache-2.0</li>
+                                    <li>reqwest - MIT/Apache-2.0</li>
+                                    <li>tokio - MIT</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p style="margin: 12px 0 0 0;">
+                            Latin analysis powered by <a href="https://www.anthropic.com" target="_blank" style="color: var(--md-sys-color-primary);">Anthropic Claude</a>
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </div>
+        <div class="dialog-actions">
+            <button class="button button-filled" onclick="closeAbout()">OK</button>
+        </div>
+    </div>
+    
+    <script>
+        const input = document.getElementById('latin-word');
+        const searchBtn = document.getElementById('search-btn');
+        const resultDiv = document.getElementById('result');
+        const apiKeyInput = document.getElementById('api-key');
+        const apiKeyStatus = document.getElementById('api-key-status');
+        const scrim = document.getElementById('scrim');
+        const aboutDialog = document.getElementById('about-dialog');
+        
+        // Check API key status on load
+        async function checkApiKeyStatus() {
+            try {
+                const { invoke } = window.__TAURI__.core;
+                const hasKey = await invoke('has_api_key');
+                
+                if (hasKey) {
+                    // Don't show anything when API key is configured for cleaner UI
+                    apiKeyStatus.innerHTML = '';
+                } else {
+                    apiKeyStatus.innerHTML = `
+                        <div class="status-chip not-configured">
+                            <span class="material-icons">warning</span>
+                            API key not configured
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error checking API key status:', error);
+            }
+        }
+        
+        // Local storage cache for word lookups
+        const CACHE_KEY_PREFIX = 'latin_word_';
+        const CACHE_EXPIRY_DAYS = 30;
+        
+        function getCachedWord(word) {
+            const key = CACHE_KEY_PREFIX + word.toLowerCase();
+            const cached = localStorage.getItem(key);
+            if (!cached) return null;
+            
+            try {
+                const data = JSON.parse(cached);
+                const now = new Date().getTime();
+                const expiryTime = CACHE_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+                
+                // Check if cache has expired
+                if (now - data.timestamp > expiryTime) {
+                    localStorage.removeItem(key);
+                    return null;
+                }
+                
+                return data.result;
+            } catch (error) {
+                console.error('Error parsing cached data:', error);
+                localStorage.removeItem(key);
+                return null;
+            }
+        }
+        
+        function setCachedWord(word, result) {
+            const key = CACHE_KEY_PREFIX + word.toLowerCase();
+            const data = {
+                result: result,
+                timestamp: new Date().getTime()
+            };
+            
+            try {
+                localStorage.setItem(key, JSON.stringify(data));
+            } catch (error) {
+                console.error('Error caching word:', error);
+                // If localStorage is full, clear old entries
+                if (error.name === 'QuotaExceededError') {
+                    clearOldCache();
+                    try {
+                        localStorage.setItem(key, JSON.stringify(data));
+                    } catch (e) {
+                        console.error('Still cannot cache after clearing:', e);
+                    }
+                }
+            }
+        }
+        
+        function clearOldCache() {
+            const keys = Object.keys(localStorage);
+            const now = new Date().getTime();
+            const expiryTime = CACHE_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+            
+            keys.forEach(key => {
+                if (key.startsWith(CACHE_KEY_PREFIX)) {
+                    try {
+                        const data = JSON.parse(localStorage.getItem(key));
+                        if (now - data.timestamp > expiryTime) {
+                            localStorage.removeItem(key);
+                        }
+                    } catch (error) {
+                        // Remove corrupted entries
+                        localStorage.removeItem(key);
+                    }
+                }
+            });
+        }
+        
+        // Handle submit
+        async function lookupWord() {
+            const word = input.value.trim();
+            if (!word) return;
+            
+            // Check cache first
+            const cached = getCachedWord(word);
+            if (cached) {
+                console.log(`Using cached result for "${word}"`);
+                displayResult(cached);
+                return;
+            }
+            
+            // Show loading state
+            searchBtn.disabled = true;
+            resultDiv.classList.add('show');
+            resultDiv.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    Looking up word...
+                </div>
+            `;
+            
+            try {
+                const { invoke } = window.__TAURI__.core;
+                const customPrompt = localStorage.getItem('custom_prompt') || '';
+                const result = await invoke('lookup_latin_word', { 
+                    word,
+                    customPrompt: customPrompt.trim() || null
+                });
+                
+                // Cache the result
+                setCachedWord(word, result);
+                
+                // Display result
+                displayResult(result);
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error-message">
+                        <span class="material-icons">error</span>
+                        ${error}
+                    </div>
+                `;
+            } finally {
+                searchBtn.disabled = false;
+            }
+        }
+        
+        function displayResult(result) {
+            let resultHTML = `
+                <div class="word-with-macrons">${result.word_with_macrons}</div>
+                <div class="part-of-speech">${result.part_of_speech}</div>
+                <div class="definition">${result.definition}</div>
+            `;
+            
+            // Add principal parts and stems if this is a verb
+            if (result.principal_parts) {
+                resultHTML += `
+                    <div class="principal-parts">
+                        <strong>Principal Parts:</strong> ${result.principal_parts}
+                    </div>
+                `;
+            }
+            
+            if (result.stems) {
+                resultHTML += `
+                    <div class="stems">
+                        <strong>Stems:</strong> ${result.stems}
+                    </div>
+                `;
+            }
+            
+            resultDiv.classList.add('show');
+            resultDiv.innerHTML = resultHTML;
+        }
+        
+        // Settings functions
+        function openSettings() {
+            console.log('openSettings() called');
+            document.getElementById('main-page').classList.add('hidden');
+            document.getElementById('settings-page').classList.remove('hidden');
+            loadCurrentKey();
+        }
+        
+        async function openAnthropicLink(event) {
+            event.preventDefault();
+            const { invoke } = window.__TAURI__.core;
+            await invoke('open_external_url', { url: 'https://console.anthropic.com/settings/keys' });
+        }
+        
+        function closeSettings() {
+            document.getElementById('settings-page').classList.add('hidden');
+            document.getElementById('main-page').classList.remove('hidden');
+        }
+        
+        // About dialog functions
+        async function openAbout() {
+            scrim.classList.add('show');
+            aboutDialog.classList.add('show');
+            
+            // Fetch and display current version
+            try {
+                const { invoke } = window.__TAURI__.core;
+                const version = await invoke('get_app_version');
+                document.getElementById('app-version').textContent = `Version ${version}`;
+            } catch (error) {
+                console.error('Error fetching app version:', error);
+                document.getElementById('app-version').textContent = 'Version unavailable';
+            }
+        }
+        
+        function closeAbout() {
+            scrim.classList.remove('show');
+            aboutDialog.classList.remove('show');
+        }
+        
+        async function loadCurrentKey() {
+            try {
+                const { invoke } = window.__TAURI__.core;
+                const key = await invoke('get_api_key');
+                if (key) {
+                    apiKeyInput.value = key;
+                }
+
+                // Load custom prompt
+                const customPrompt = localStorage.getItem('custom_prompt') || '';
+                const customPromptInput = document.getElementById('custom-prompt');
+                customPromptInput.value = customPrompt;
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+        
+        async function saveSettings() {
+            const apiKey = apiKeyInput.value.trim();
+            const customPrompt = document.getElementById('custom-prompt').value.trim();
+            
+            try {
+                const { invoke } = window.__TAURI__.core;
+                await invoke('save_api_key', { apiKey });
+                
+                // Save custom prompt to localStorage
+                localStorage.setItem('custom_prompt', customPrompt);
+                
+                // Navigate back to main page
+                closeSettings();
+                checkApiKeyStatus();
+                
+                // Show success message on main page
+                const resultDiv = document.getElementById('result');
+                resultDiv.classList.add('show');
+                resultDiv.innerHTML = `
+                    <div class="success-message">
+                        <span class="material-icons">check_circle</span>
+                        Settings saved successfully!
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    if (resultDiv.innerHTML.includes('success-message')) {
+                        resultDiv.classList.remove('show');
+                    }
+                }, 3000);
+            } catch (error) {
+                alert('Error saving settings: ' + error);
+            }
+        }
+        
+        function clearCache() {
+            console.log('clearCache() called');
+            const keys = Object.keys(localStorage);
+            let clearedCount = 0;
+            
+            keys.forEach(key => {
+                if (key.startsWith(CACHE_KEY_PREFIX)) {
+                    console.log('Removing cached word:', key);
+                    localStorage.removeItem(key);
+                    clearedCount++;
+                }
+            });
+            
+            console.log('Cleared', clearedCount, 'words from cache');
+            
+            // Show feedback in the settings page
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.className = 'success-message';
+            feedbackDiv.style.marginTop = '12px';
+            feedbackDiv.innerHTML = `
+                <span class="material-icons">check_circle</span>
+                Cleared ${clearedCount} cached ${clearedCount === 1 ? 'word' : 'words'}
+            `;
+            
+            // Find the cache management section and add feedback
+            const cacheHeading = Array.from(document.querySelectorAll('h3')).find(h3 => h3.textContent === 'Cache Management');
+            if (cacheHeading) {
+                const cacheSection = cacheHeading.parentElement;
+                cacheSection.appendChild(feedbackDiv);
+                
+                // Auto-remove after 3 seconds
+                setTimeout(() => {
+                    feedbackDiv.remove();
+                }, 3000);
+            }
+        }
+        
+        // Event listeners
+        searchBtn.addEventListener('click', lookupWord);
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                lookupWord();
+            }
+        });
+        
+        // Keyboard shortcut for settings (Cmd+, on macOS)
+        document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === ',') {
+                e.preventDefault();
+                openSettings();
+            }
+        });
+        
+        // Close about dialog on scrim click
+        scrim.addEventListener('click', () => {
+            if (aboutDialog.classList.contains('show')) {
+                closeAbout();
+            }
+        });
+        
+        // Check API key status on load
+        window.addEventListener('DOMContentLoaded', () => {
+            checkApiKeyStatus();
+            
+            // Listen for menu events
+            if (window.__TAURI__) {
+                console.log('Setting up Tauri event listeners');
+                const { listen } = window.__TAURI__.event;
+                
+                // Settings menu listener
+                listen('open-settings', (event) => {
+                    console.log('Received open-settings event from menu:', event);
+                    openSettings();
+                }).then(() => {
+                    console.log('Settings event listener successfully registered');
+                }).catch((error) => {
+                    console.error('Error setting up settings event listener:', error);
+                });
+                
+                // About menu listener
+                listen('open-about', (event) => {
+                    console.log('Received open-about event from menu:', event);
+                    openAbout();
+                }).then(() => {
+                    console.log('About event listener successfully registered');
+                }).catch((error) => {
+                    console.error('Error setting up about event listener:', error);
+                });
+            } else {
+                console.log('Tauri not available');
+            }
+        });
+    </script>
+</body>
+</html>

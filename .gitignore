@@ -1,0 +1,15 @@
+# Rust build artifacts
+/target/
+src-tauri/target/
+
+# macOS
+.DS_Store
+
+# Editor
+.idea/
+*.swp
+*.swo
+
+# Local config
+CLAUDE.local.md
+.claude/

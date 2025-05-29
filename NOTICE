@@ -1,0 +1,77 @@
+Latin Word Lookup
+Copyright (c) 2024 David Ward
+
+This software includes the following third-party open source components:
+
+================================================================================
+Tauri Framework
+================================================================================
+Copyright 2019-2024 Tauri Programme within The Commons Conservancy
+Licensed under the Apache License, Version 2.0 or MIT License
+https://github.com/tauri-apps/tauri
+
+================================================================================
+Material Icons
+================================================================================
+Copyright 2020 Google LLC
+Licensed under the Apache License, Version 2.0
+https://github.com/google/material-design-icons
+
+================================================================================
+Roboto Font
+================================================================================
+Copyright 2011 Google Inc.
+Licensed under the Apache License, Version 2.0
+https://github.com/googlefonts/roboto
+
+================================================================================
+Rust Dependencies
+================================================================================
+
+serde - Serialization framework
+Copyright (c) 2014 The Rust Project Developers
+Licensed under the MIT License or Apache License, Version 2.0
+https://github.com/serde-rs/serde
+
+reqwest - HTTP client
+Copyright (c) 2016 Sean McArthur
+Licensed under the MIT License or Apache License, Version 2.0
+https://github.com/seanmonstar/reqwest
+
+tokio - Asynchronous runtime
+Copyright (c) 2019 Tokio Contributors
+Licensed under the MIT License
+https://github.com/tokio-rs/tokio
+
+open - Cross-platform open functionality
+Copyright (c) 2015 Sebastian Thiel
+Licensed under the MIT License
+https://github.com/Byron/open-rs
+
+================================================================================
+Development Dependencies
+================================================================================
+
+mockito - HTTP mocking
+Copyright (c) 2016 Florin Lipan
+Licensed under the MIT License
+https://github.com/lipanski/mockito
+
+tempfile - Temporary file library
+Copyright (c) 2015 Steven Allen
+Licensed under the MIT License or Apache License, Version 2.0
+https://github.com/Stebalien/tempfile
+
+================================================================================
+
+The full text of the licenses mentioned above can be found at:
+
+MIT License: https://opensource.org/licenses/MIT
+Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
+
+================================================================================
+
+This software uses the Anthropic Claude API for Latin word analysis.
+The Claude API is a proprietary service provided by Anthropic, PBC.
+Users must obtain their own API key from Anthropic to use this functionality.
+https://www.anthropic.com/

@@ -1,0 +1,30 @@
+[package]
+name = "playground"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["David Ward"]
+description = "A Tauri-based Latin word lookup application with Claude AI integration"
+repository = "https://github.com/warddave/latin-word-lookup"
+keywords = ["latin", "dictionary", "education", "tauri", "claude"]
+categories = ["education", "gui"]
+
+[build-dependencies]
+tauri-build = { version = "2.1", features = [] }
+
+[dependencies]
+tauri = { version = "2.5", features = [] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+reqwest = { version = "0.12", features = ["json"] }
+tokio = { version = "1.41", features = ["full"] }
+open = "5.0"
+
+[dev-dependencies]
+mockito = "1.0"
+tokio-test = "0.4"
+tempfile = "3.0"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
