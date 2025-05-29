@@ -6,6 +6,7 @@ license = "MIT"
 authors = ["David Ward"]
 description = "A Tauri-based Latin word lookup application with Claude AI integration"
 repository = "https://github.com/warddave/latin-word-lookup"
+readme = "../README.md"
 keywords = ["latin", "dictionary", "education", "tauri", "claude"]
 categories = ["education", "gui"]
 
