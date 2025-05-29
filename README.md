@@ -26,8 +26,8 @@ A modern, desktop application for looking up Latin words with detailed grammatic
 
 ### Download Pre-built Release
 
-Download the latest release for macOS (Apple Silicon):
-- [Latin Word Lookup v0.1.0 (macOS)](https://github.com/warddave/latin-word-lookup/releases/download/v0.1.0/Latin.Word.Lookup_0.1.0_aarch64.dmg)
+Download the latest release for your platform:
+- [Latin Word Lookup v0.1.0 (macOS Apple Silicon)](https://github.com/warddave/latin-word-lookup/releases/download/v0.1.0/Latin%20Word%20Lookup_0.1.0_aarch64.dmg)
 
 After downloading:
 1. Open the DMG file
