@@ -54,7 +54,7 @@ jobs:
     
     - name: Run clippy
       working-directory: src-tauri
-      run: cargo clippy -- -D warnings
+      run: cargo clippy --all-targets -- -D warnings
     
     - name: Install cargo-audit
       run: cargo install cargo-audit

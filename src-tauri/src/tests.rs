@@ -23,12 +23,12 @@ mod main_tests {
             })
         };
 
-        assert!(validate_latin("test123") == false);
-        assert!(validate_latin("test!") == false);
-        assert!(validate_latin("test") == true);
-        assert!(validate_latin("amīcus") == true);
-        assert!(validate_latin("rēx") == true);
-        assert!(validate_latin("amō") == true);
+        assert!(!validate_latin("test123"));
+        assert!(!validate_latin("test!"));
+        assert!(validate_latin("test"));
+        assert!(validate_latin("amīcus"));
+        assert!(validate_latin("rēx"));
+        assert!(validate_latin("amō"));
     }
 }
 
@@ -74,7 +74,7 @@ mod claude_api_tests {
     fn test_claude_client_creation_with_key() {
         let client = ClaudeClient::new_with_key("sk-ant-test-key".to_string());
         // Can't access private field api_key, but we can verify the client was created
-        assert_eq!(std::mem::size_of_val(&client) > 0, true);
+        assert!(std::mem::size_of_val(&client) > 0);
     }
 
     #[test]

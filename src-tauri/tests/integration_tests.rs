@@ -87,7 +87,7 @@ fn test_claude_client_stores_api_key() {
 
     // We can't directly access the api_key field, but we can verify
     // the client was created successfully
-    assert_eq!(std::mem::size_of_val(&client) > 0, true);
+    assert!(std::mem::size_of_val(&client) > 0);
 }
 
 #[tokio::test]
@@ -106,7 +106,7 @@ async fn test_config_and_api_integration() {
     let client = ClaudeClient::new_with_key(test_api_key);
 
     // Client should be created successfully
-    assert_eq!(std::mem::size_of_val(&client) > 0, true);
+    assert!(std::mem::size_of_val(&client) > 0);
 }
 
 #[test]
