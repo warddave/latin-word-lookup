@@ -91,7 +91,7 @@ cargo tauri dev
 
 ## Usage
 
-![Latin Word Lookup Screenshot](docs/images/app-screenshot.png)
+![Latin Word Lookup Screenshot](https://raw.githubusercontent.com/warddave/latin-word-lookup/main/docs/images/app-screenshot.png)
 
 1. **First-time setup**: 
    - Launch the application
