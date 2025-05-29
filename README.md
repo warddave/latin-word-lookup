@@ -13,7 +13,7 @@ A modern, desktop application for looking up Latin words with detailed grammatic
   - Tense, mood, and voice for verb forms
 - ⚡ **Offline caching** for previously looked up words (30-day retention)
 - 🎨 **Material Design 3** interface
-- 🤖 **Powered by Claude AI** for accurate Latin analysis
+- 🤖 **Powered by Claude 3.5 Sonnet** for accurate Latin analysis
 - 🛠️ **Custom prompt support** to tailor AI responses
 - ⌨️ **Keyboard shortcuts** (⌘, for Settings on macOS)
 
@@ -21,6 +21,10 @@ A modern, desktop application for looking up Latin words with detailed grammatic
 
 - macOS, Windows, or Linux
 - An Anthropic API key (get one at [console.anthropic.com](https://console.anthropic.com))
+
+## Cost
+
+The app uses Claude 3.5 Sonnet for Latin word analysis. Based on current API pricing, you can expect to pay approximately **$1 per 200-300 word lookups**. Cached lookups (repeated words within 30 days) are free and don't use the API.
 
 ## Installation
 
