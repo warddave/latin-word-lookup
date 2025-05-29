@@ -57,14 +57,20 @@ jobs:
       run: cargo clippy --all-targets -- -D warnings
     
     - name: Install cargo-audit
-      run: cargo install cargo-audit
+      run: |
+        if ! command -v cargo-audit &> /dev/null; then
+          cargo install cargo-audit
+        fi
     
     - name: Security audit
       working-directory: src-tauri
       run: cargo audit
     
     - name: Install cargo-deny
-      run: cargo install cargo-deny
+      run: |
+        if ! command -v cargo-deny &> /dev/null; then
+          cargo install cargo-deny
+        fi
     
     - name: Check licenses and dependencies
       working-directory: src-tauri
@@ -102,7 +108,10 @@ jobs:
         sudo apt-get install -y libwebkit2gtk-4.1-dev libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
     
     - name: Install cargo-outdated
-      run: cargo install cargo-outdated
+      run: |
+        if ! command -v cargo-outdated &> /dev/null; then
+          cargo install cargo-outdated
+        fi
     
     - name: Check for outdated dependencies
       working-directory: src-tauri
